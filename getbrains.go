@@ -51,11 +51,13 @@ func main() {
 	case "install":
 		r := core.DownloadTool(tool,dist)
 		core.InstallTool(tool,dist,r.Version)
+		core.DownloadCleanup(tool)
 	case "update": fallthrough
 	case "upgrade":
 		r := core.DownloadTool(tool,dist)
 		core.UninstallTool(tool,dist,r.Version)
 		core.InstallTool(tool,dist,r.Version)
+		core.DownloadCleanup(tool)
 	case "remove": fallthrough
 	case "uninstall":
 		release,err := core.GetReleaseInfo(tool,dist)
