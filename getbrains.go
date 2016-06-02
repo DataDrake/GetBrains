@@ -60,6 +60,8 @@ func main() {
 		core.PrintRelease(tool,dist)
 	case "download":
 		core.DownloadTool(tool,dist)
+	case "cleanup":
+		core.DownloadCleanup(tool)
 	default:
 		fmt.Fprintf(os.Stderr,"ERROR: Command \"%s\" is not valid\n",cmd)
 		os.Exit(1)

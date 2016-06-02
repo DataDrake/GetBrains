@@ -70,6 +70,21 @@ func getFile(path,url string) error {
 	return nil
 }
 
+func DownloadCleanup(tool string) {
+	f := os.TempDir() + string(filepath.Separator) + tool
+	c := os.TempDir() + string(filepath.Separator) + tool + ".sha256"
+	fmt.Printf("Removing temporary file '%s'...\n",f)
+	err := os.Remove(f)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not remove temporary file '%s', reason: %s \n",f,err.Error())
+	}
+	fmt.Printf("Removing temporary file '%s'...\n",c)
+	err = os.Remove(c)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Could not remove temporary file '%s', reason: %s \n",c,err.Error())
+	}
+}
+
 func Download(tool string, r *Release) error {
 	f := os.TempDir() + string(filepath.Separator) + tool
 	c := os.TempDir() + string(filepath.Separator) + tool + ".sha256"
