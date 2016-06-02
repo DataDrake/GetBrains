@@ -57,15 +57,9 @@ func main() {
 	case "uninstall":
 
 	case "info":
-		release,err := core.GetReleaseInfo(tool,dist)
-		if err != nil {
-			fmt.Fprintln(os.Stderr,err.Error())
-			os.Exit(1)
-		}
-		fmt.Printf("Version: %s\n",release.Version)
-		fmt.Printf("Download: %s\n",release.DownloadURL)
-		fmt.Printf("Checksum: %s\n",release.ChecksumURL)
-
+		core.PrintRelease(tool,dist)
+	case "download":
+		core.DownloadTool(tool,dist)
 	default:
 		fmt.Fprintf(os.Stderr,"ERROR: Command \"%s\" is not valid\n",cmd)
 		os.Exit(1)

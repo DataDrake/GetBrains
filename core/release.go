@@ -5,6 +5,8 @@ import (
 	"errors"
 	"io/ioutil"
 	"regexp"
+	"fmt"
+	"os"
 )
 
 const apiBase = "https://data.services.jetbrains.com/products/releases?code="
@@ -97,4 +99,15 @@ func GetReleaseInfo(tool,dist string) (*Release,error){
 	}
 	r.ChecksumURL = checksum[1]
 	return r,nil
+}
+
+func PrintRelease(tool,dist string) {
+	release,err := GetReleaseInfo(tool,dist)
+	if err != nil {
+		fmt.Fprintln(os.Stderr,err.Error())
+		os.Exit(1)
+	}
+	fmt.Printf("Version: %s\n",release.Version)
+	fmt.Printf("Download: %s\n",release.DownloadURL)
+	fmt.Printf("Checksum: %s\n",release.ChecksumURL)
 }
