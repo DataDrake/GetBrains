@@ -49,13 +49,20 @@ func main() {
 	switch cmd {
 	case "add": fallthrough
 	case "install":
-
+		r := core.DownloadTool(tool,dist)
+		core.InstallTool(tool,dist,r.Version)
 	case "update": fallthrough
 	case "upgrade":
-
+		r := core.DownloadTool(tool,dist)
+		core.UninstallTool(tool,dist,r.Version)
+		core.InstallTool(tool,dist,r.Version)
 	case "remove": fallthrough
 	case "uninstall":
-
+		release,err := core.GetReleaseInfo(tool,dist)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Could not retrieve release information")
+		}
+		core.UninstallTool(tool,dist,release.Version)
 	case "info":
 		core.PrintRelease(tool,dist)
 	case "download":

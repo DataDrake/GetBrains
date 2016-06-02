@@ -71,8 +71,8 @@ func getFile(path,url string) error {
 }
 
 func DownloadCleanup(tool string) {
-	f := os.TempDir() + string(filepath.Separator) + tool
-	c := os.TempDir() + string(filepath.Separator) + tool + ".sha256"
+	f := filepath.Join(os.TempDir(),tool)
+	c := f + ".sha256"
 	fmt.Printf("Removing temporary file '%s'...\n",f)
 	err := os.Remove(f)
 	if err != nil {
@@ -86,8 +86,8 @@ func DownloadCleanup(tool string) {
 }
 
 func Download(tool string, r *Release) error {
-	f := os.TempDir() + string(filepath.Separator) + tool
-	c := os.TempDir() + string(filepath.Separator) + tool + ".sha256"
+	f := filepath.Join(os.TempDir(),tool)
+	c := f + ".sha256"
 	fmt.Printf("Downloading %s %s to '%s'...\n",tool,r.Version,f)
 	err := getFile(f,r.DownloadURL)
 	if err == nil {
@@ -101,7 +101,7 @@ func Download(tool string, r *Release) error {
 	return err
 }
 
-func DownloadTool(tool,dist string) {
+func DownloadTool(tool,dist string) *Release {
 	fmt.Println("Retrieving Release Information...")
 	release,err := GetReleaseInfo(tool,dist)
 	if err == nil {
@@ -112,4 +112,5 @@ func DownloadTool(tool,dist string) {
 		os.Exit(1)
 	}
 	fmt.Println("Success!")
+	return release
 }
