@@ -3,18 +3,18 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/DataDrake/GetBrains/core"
 	"os"
 	"runtime"
-	"github.com/DataDrake/GetBrains/core"
 )
 
 func usage() {
-	fmt.Fprintln(os.Stderr,"USAGE: getbrains COMMAND [TOOL]")
+	fmt.Fprintln(os.Stderr, "USAGE: getbrains COMMAND [TOOL]")
 	flag.PrintDefaults()
 }
 
 func main() {
-	flag.Usage = func () {usage()}
+	flag.Usage = func() { usage() }
 	flag.Parse()
 	args := flag.Args()
 
@@ -47,32 +47,35 @@ func main() {
 
 	//Handle Command
 	switch cmd {
-	case "add": fallthrough
+	case "add":
+		fallthrough
 	case "install":
-		r := core.DownloadTool(tool,dist)
-		core.InstallTool(tool,dist,r.Version)
+		r := core.DownloadTool(tool, dist)
+		core.InstallTool(tool, dist, r.Version)
 		core.DownloadCleanup(tool)
-	case "update": fallthrough
+	case "update":
+		fallthrough
 	case "upgrade":
-		r := core.DownloadTool(tool,dist)
-		core.UninstallTool(tool,dist,r.Version)
-		core.InstallTool(tool,dist,r.Version)
+		r := core.DownloadTool(tool, dist)
+		core.UninstallTool(tool, dist, r.Version)
+		core.InstallTool(tool, dist, r.Version)
 		core.DownloadCleanup(tool)
-	case "remove": fallthrough
+	case "remove":
+		fallthrough
 	case "uninstall":
-		release,err := core.GetReleaseInfo(tool,dist)
+		release, err := core.GetReleaseInfo(tool, dist)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Could not retrieve release information")
 		}
-		core.UninstallTool(tool,dist,release.Version)
+		core.UninstallTool(tool, dist, release.Version)
 	case "info":
-		core.PrintRelease(tool,dist)
+		core.PrintRelease(tool, dist)
 	case "download":
-		core.DownloadTool(tool,dist)
+		core.DownloadTool(tool, dist)
 	case "cleanup":
 		core.DownloadCleanup(tool)
 	default:
-		fmt.Fprintf(os.Stderr,"ERROR: Command \"%s\" is not valid\n",cmd)
+		fmt.Fprintf(os.Stderr, "ERROR: Command \"%s\" is not valid\n", cmd)
 		os.Exit(1)
 	}
 

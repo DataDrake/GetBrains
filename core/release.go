@@ -1,12 +1,12 @@
 package core
 
 import (
-	"net/http"
 	"errors"
-	"io/ioutil"
-	"regexp"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
+	"regexp"
 )
 
 const apiBase = "https://data.services.jetbrains.com/products/releases?code="
@@ -19,43 +19,43 @@ var DOWNLOAD_MATCH = regexp.MustCompile("\"link\":\"(.*?)\"")
 var CHECKSUM_MATCH = regexp.MustCompile("\"checksumLink\":\"(.*?)\"")
 var VERSION_MATCH = regexp.MustCompile("\"version\":\"(.*?)\"")
 
-var releaseCode = map[string]string {
-	"appcode" : "AC",
-	"clion" : "CL",
-	"datagrip" : "DG",
-	"idea" : "IIU",
-	"intellij" : "IIU",
-	"idea-ce" : "IIC",
-	"intellij-ce" : "IIC",
-	"mps" : "MPS",
-	"phpstorm" : "PS",
-	"pycharm" : "PCP",
-	"pycharm-ce" : "PCC",
-	"rubymine" : "RM",
-	"webstorm" : "WS",
+var releaseCode = map[string]string{
+	"appcode":     "AC",
+	"clion":       "CL",
+	"datagrip":    "DG",
+	"idea":        "IIU",
+	"intellij":    "IIU",
+	"idea-ce":     "IIC",
+	"intellij-ce": "IIC",
+	"mps":         "MPS",
+	"phpstorm":    "PS",
+	"pycharm":     "PCP",
+	"pycharm-ce":  "PCC",
+	"rubymine":    "RM",
+	"webstorm":    "WS",
 }
 
 type Release struct {
 	ChecksumURL string
 	DownloadURL string
-	Version string
+	Version     string
 }
 
-func GetReleaseInfo(tool,dist string) (*Release,error){
+func GetReleaseInfo(tool, dist string) (*Release, error) {
 	code := releaseCode[tool]
 	if code == "" {
-		return nil,errors.New(tool + " is an invalid toolname")
+		return nil, errors.New(tool + " is an invalid toolname")
 	}
 	//get the JSON formatted release information
-	resp, err := http.Get(apiBase+code)
+	resp, err := http.Get(apiBase + code)
 	if err != nil {
-		return nil,errors.New("Could not get release information, reason: " + err.Error())
+		return nil, errors.New("Could not get release information, reason: " + err.Error())
 	}
 
 	//turn it into a string
-	infoRaw,err := ioutil.ReadAll(resp.Body)
+	infoRaw, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil,errors.New("Could not read release information response, reason: " + err.Error())
+		return nil, errors.New("Could not read release information response, reason: " + err.Error())
 	}
 
 	r := &Release{}
@@ -78,7 +78,7 @@ func GetReleaseInfo(tool,dist string) (*Release,error){
 	case "windows":
 		distRelease = WINDOWS_MATCH.FindStringSubmatch(info)
 	default:
-		distRelease = make([]string,0)
+		distRelease = make([]string, 0)
 	}
 
 	if len(distRelease) != 3 {
@@ -98,16 +98,16 @@ func GetReleaseInfo(tool,dist string) (*Release,error){
 		return nil, errors.New("Could not find checksum link")
 	}
 	r.ChecksumURL = checksum[1]
-	return r,nil
+	return r, nil
 }
 
-func PrintRelease(tool,dist string) {
-	release,err := GetReleaseInfo(tool,dist)
+func PrintRelease(tool, dist string) {
+	release, err := GetReleaseInfo(tool, dist)
 	if err != nil {
-		fmt.Fprintln(os.Stderr,err.Error())
+		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
-	fmt.Printf("Version: %s\n",release.Version)
-	fmt.Printf("Download: %s\n",release.DownloadURL)
-	fmt.Printf("Checksum: %s\n",release.ChecksumURL)
+	fmt.Printf("Version: %s\n", release.Version)
+	fmt.Printf("Download: %s\n", release.DownloadURL)
+	fmt.Printf("Checksum: %s\n", release.ChecksumURL)
 }
